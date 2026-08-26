@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Портфель проектов — дашборды</title>
+  <style>
+    :root{--bg:#0e2a44;--surface:#153a5b;--surface2:#123350;--line:#2c5478;--text:#eaf3fa;--muted:#9bb9cf;--cyan:#6fc1e8;--green:#3fa372;--amber:#d69a36;--red:#db5b7a;--gray:#55728d;--shadow:0 16px 40px -24px rgba(0,0,0,.7);font-family:'Segoe UI',Arial,sans-serif}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 75% -10%,#194b72 0,transparent 37%),var(--bg);color:var(--text);min-height:100vh}
+    .wrap{max-width:1180px;margin:auto;padding:42px 24px 64px}.eyebrow{color:var(--cyan);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-size:clamp(30px,5vw,52px);letter-spacing:-.035em;margin:9px 0 10px;line-height:1.04}.intro{color:var(--muted);max-width:720px;margin:0 0 28px;line-height:1.55}
+    .summary{display:grid;grid-template-columns:1.15fr repeat(4,1fr);gap:12px;margin-bottom:28px}.metric{background:rgba(21,58,91,.92);border:1px solid var(--line);border-radius:14px;padding:17px 18px;box-shadow:var(--shadow)}
+    .metric small{display:block;color:var(--muted);font-size:12px;min-height:30px}.metric strong{display:block;font-size:28px;margin-top:5px;font-variant-numeric:tabular-nums}.metric.primary strong{color:var(--cyan)}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 16px}.toolbar h2{font-size:16px;margin:0}.search{width:min(330px,100%);background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 13px;outline:none}.search:focus{border-color:var(--cyan)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.project-card{background:linear-gradient(145deg,rgba(21,58,91,.96),rgba(18,51,80,.96));border:1px solid var(--line);border-radius:16px;padding:20px 21px 18px;box-shadow:var(--shadow);min-width:0}
+    .cadence{background:rgba(21,58,91,.92);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:28px;box-shadow:var(--shadow)}.cadence-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.cadence h2{margin:0 0 5px;font-size:18px}.cadence-sub{margin:0;color:var(--muted);font-size:12px}.cadence-kpis{display:flex;gap:16px;flex-wrap:wrap}.cadence-kpis span{font-size:10px;color:var(--muted);white-space:nowrap}.cadence-kpis b{display:block;color:var(--text);font:700 20px Consolas,monospace;margin-top:3px}.portfolio-week-scroll{overflow-x:auto;margin-top:18px;padding-bottom:6px}.portfolio-week-chart{height:230px;display:flex;align-items:flex-end;gap:8px;min-width:max-content;border-bottom:1px solid var(--line);padding:20px 4px 0}.portfolio-week{width:53px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}.portfolio-week>b{font:700 10px Consolas,monospace;height:17px}.portfolio-week-bar{width:31px;min-height:3px;display:flex;flex-direction:column-reverse;overflow:hidden;border-radius:5px 5px 2px 2px;border:1px solid rgba(255,255,255,.18)}.portfolio-week.zero .portfolio-week-bar{background:rgba(255,255,255,.08)}.portfolio-week-bar i{display:block;width:100%}.portfolio-week>span{font:9px Consolas,monospace;color:var(--muted);margin-top:7px}.cadence-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:10px}.cadence-legend span{display:flex;align-items:center;gap:5px}.cadence-legend i{width:8px;height:8px;border-radius:2px}
+    .card-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.project-no{font-size:10px;color:var(--cyan);text-transform:uppercase;letter-spacing:.11em;font-weight:700}.project-card h2{font-size:22px;margin:6px 0 0;line-height:1.2}
+    .progress-ring{--value:0;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:conic-gradient(var(--green) calc(var(--value)*1%),rgba(255,255,255,.08) 0);position:relative}.progress-ring:after{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--surface)}.progress-ring span{position:relative;z-index:1;font-weight:700;font-size:13px}
+    .dates{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 14px}.dates span{font-family:Consolas,monospace;font-weight:600}.dates small{display:block;font-family:'Segoe UI',sans-serif;font-weight:400;color:var(--muted);font-size:11px;margin-bottom:3px}.warn{color:var(--amber)!important}.danger{color:var(--red)!important}
+    .status-strip{height:9px;border-radius:99px;display:flex;overflow:hidden;background:#203f5a}.status-strip i{height:100%}.status-strip .done{background:var(--green)}.status-strip .work{background:var(--amber)}.status-strip .plan{background:var(--gray)}
+    .counts{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:10px 0 18px}.counts b{font-family:Consolas,monospace;color:var(--text);font-size:14px}.counts .green{color:var(--green)}.counts .amber{color:var(--amber)}
+    .card-bottom{border-top:1px solid var(--line);padding-top:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}.deadline{color:var(--muted);font-size:11px}.project-card a{color:var(--text);text-decoration:none;font-size:13px;font-weight:600;padding:9px 12px;background:rgba(111,193,232,.10);border:1px solid rgba(111,193,232,.32);border-radius:9px}.project-card a:hover,.project-card a:focus{background:rgba(111,193,232,.18);border-color:var(--cyan)}
+    footer{margin-top:28px;color:var(--muted);font-size:11px;border-top:1px solid var(--line);padding-top:16px}.hidden{display:none}
+    @media(max-width:900px){.summary{grid-template-columns:repeat(2,1fr)}.metric.primary{grid-column:span 2}.grid{grid-template-columns:1fr}.cadence-head{flex-direction:column}}
+    @media(max-width:540px){.wrap{padding:28px 16px 48px}.summary{grid-template-columns:1fr}.metric.primary{grid-column:auto}.toolbar{align-items:stretch;flex-direction:column}.search{width:100%}.card-bottom{align-items:stretch;flex-direction:column}.project-card a{text-align:center}.dates{grid-template-columns:1fr}.cadence-kpis{display:grid;grid-template-columns:1fr 1fr;width:100%}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="eyebrow">Программа повышения производительности труда · макрорегион 3</div>
+    <h1>Портфель проектов</h1>
+    <p class="intro">Единая точка входа в дашборды проектов. Сводные показатели рассчитаны из локальных снимков Notion; внутри карточки можно открыть подробный дашборд проекта.</p>
+    <section class="summary" aria-label="Сводные показатели портфеля">
+      <div class="metric primary"><small>Выполнение портфеля</small><strong>23%</strong></div>
+      <div class="metric"><small>Проектов</small><strong>5</strong></div>
+      <div class="metric"><small>Выполнено мероприятий</small><strong>45</strong></div>
+      <div class="metric"><small>В работе</small><strong>22</strong></div>
+      <div class="metric"><small>Ожидают старта</small><strong>128</strong></div>
+    </section>
+    <section class="cadence" aria-label="Темп закрытия мероприятий портфеля">
+      <div class="cadence-head">
+        <div><h2>Закрытие мероприятий по неделям</h2><p class="cadence-sub">Понедельник–воскресенье · по полю Notion «Конец факт» · цвет показывает проект</p></div>
+        <div class="cadence-kpis"><span>Среднее / нед.<b>3.2</b></span><span>Лучшая неделя<b>12</b></span><span>Последние 4 недели<b>30</b></span></div>
+      </div>
+      <div class="portfolio-week-scroll"><div class="portfolio-week-chart">        <div class="portfolio-week " title="25.05–31.05: 3 закрыто; ООО «Диалог»: 0; НПФ ИТС: 0; ООО Лазерные системы: 3; ООО Строй-Ресурс: 0; ООО Энергоком: 0">
+          <b>3</b><div class="portfolio-week-bar" style="height:25%"><i style="height:100%;background:#D69A36"></i></div><span>25.05</span>
+        </div>
+        <div class="portfolio-week zero" title="01.06–07.06: 0 закрыто; ООО «Диалог»: 0; НПФ ИТС: 0; ООО Лазерные системы: 0; ООО Строй-Ресурс: 0; ООО Энергоком: 0">
+          <b>0</b><div class="portfolio-week-bar" style="height:2%"></div><span>01.06</span>
+        </div>
+        <div class="portfolio-week " title="08.06–14.06: 3 закрыто; ООО «Диалог»: 0; НПФ ИТС: 0; ООО Лазерные системы: 3; ООО Строй-Ресурс: 0; ООО Энергоком: 0">
+          <b>3</b><div class="portfolio-week-bar" style="height:25%"><i style="height:100%;background:#D69A36"></i></div><span>08.06</span>
+        </div>
+        <div class="portfolio-week zero" title="15.06–21.06: 0 закрыто; ООО «Диалог»: 0; НПФ ИТС: 0; ООО Лазерные системы: 0; ООО Строй-Ресурс: 0; ООО Энергоком: 0">
+          <b>0</b><div class="portfolio-week-bar" style="height:2%"></div><span>15.06</span>
+        </div>
+        <div class="portfolio-week zero" title="22.06–28.06: 0 закрыто; ООО «Диалог»: 0; НПФ ИТС: 0; ООО Лазерные системы: 0; ООО Строй-Ресурс: 0; ООО Энергоком: 0">
+          <b>0</b><div class="portfolio-week-bar" style="height:2%"></div><span>22.06</span>
+        </div>
+        <div class="portfolio-week " title="29.06–05.07: 1 закрыто; ООО «Диалог»: 0; НПФ ИТС: 0; ООО Лазерные системы: 1; ООО Строй-Ресурс: 0; ООО Энергоком: 0">
+          <b>1</b><div class="portfolio-week-bar" style="height:10%"><i style="height:100%;background:#D69A36"></i></div><span>29.06</span>
+        </div>
+        <div class="portfolio-week " title="06.07–12.07: 4 закрыто; ООО «Диалог»: 0; НПФ ИТС: 0; ООО Лазерные системы: 4; ООО Строй-Ресурс: 0; ООО Энергоком: 0">
+          <b>4</b><div class="portfolio-week-bar" style="height:33%"><i style="height:100%;background:#D69A36"></i></div><span>06.07</span>
+        </div>
+        <div class="portfolio-week " title="13.07–19.07: 2 закрыто; ООО «Диалог»: 0; НПФ ИТС: 2; ООО Лазерные системы: 0; ООО Строй-Ресурс: 0; ООО Энергоком: 0">
+          <b>2</b><div class="portfolio-week-bar" style="height:17%"><i style="height:100%;background:#3FA372"></i></div><span>13.07</span>
+        </div>
+        <div class="portfolio-week " title="20.07–26.07: 1 закрыто; ООО «Диалог»: 0; НПФ ИТС: 0; ООО Лазерные системы: 0; ООО Строй-Ресурс: 0; ООО Энергоком: 1">
+          <b>1</b><div class="portfolio-week-bar" style="height:10%"><i style="height:100%;background:#A88DEB"></i></div><span>20.07</span>
+        </div>
+        <div class="portfolio-week " title="27.07–02.08: 1 закрыто; ООО «Диалог»: 0; НПФ ИТС: 0; ООО Лазерные системы: 0; ООО Строй-Ресурс: 1; ООО Энергоком: 0">
+          <b>1</b><div class="portfolio-week-bar" style="height:10%"><i style="height:100%;background:#DB5B7A"></i></div><span>27.07</span>
+        </div>
+        <div class="portfolio-week " title="03.08–09.08: 12 закрыто; ООО «Диалог»: 2; НПФ ИТС: 8; ООО Лазерные системы: 1; ООО Строй-Ресурс: 0; ООО Энергоком: 1">
+          <b>12</b><div class="portfolio-week-bar" style="height:100%"><i style="height:16.67%;background:#6FC1E8"></i><i style="height:66.67%;background:#3FA372"></i><i style="height:8.33%;background:#D69A36"></i><i style="height:8.33%;background:#A88DEB"></i></div><span>03.08</span>
+        </div>
+        <div class="portfolio-week " title="10.08–16.08: 11 закрыто; ООО «Диалог»: 1; НПФ ИТС: 1; ООО Лазерные системы: 3; ООО Строй-Ресурс: 2; ООО Энергоком: 4">
+          <b>11</b><div class="portfolio-week-bar" style="height:92%"><i style="height:9.09%;background:#6FC1E8"></i><i style="height:9.09%;background:#3FA372"></i><i style="height:27.27%;background:#D69A36"></i><i style="height:18.18%;background:#DB5B7A"></i><i style="height:36.36%;background:#A88DEB"></i></div><span>10.08</span>
+        </div>
+        <div class="portfolio-week " title="17.08–23.08: 4 закрыто; ООО «Диалог»: 1; НПФ ИТС: 1; ООО Лазерные системы: 0; ООО Строй-Ресурс: 1; ООО Энергоком: 1">
+          <b>4</b><div class="portfolio-week-bar" style="height:33%"><i style="height:25%;background:#6FC1E8"></i><i style="height:25%;background:#3FA372"></i><i style="height:25%;background:#DB5B7A"></i><i style="height:25%;background:#A88DEB"></i></div><span>17.08</span>
+        </div>
+        <div class="portfolio-week " title="24.08–30.08: 3 закрыто; ООО «Диалог»: 1; НПФ ИТС: 0; ООО Лазерные системы: 0; ООО Строй-Ресурс: 1; ООО Энергоком: 1">
+          <b>3</b><div class="portfolio-week-bar" style="height:25%"><i style="height:33.33%;background:#6FC1E8"></i><i style="height:33.33%;background:#DB5B7A"></i><i style="height:33.33%;background:#A88DEB"></i></div><span>24.08</span>
+        </div></div></div>
+      <div class="cadence-legend"><span><i style="background:#6FC1E8"></i>ООО «Диалог»</span><span><i style="background:#3FA372"></i>НПФ ИТС</span><span><i style="background:#D69A36"></i>ООО Лазерные системы</span><span><i style="background:#DB5B7A"></i>ООО Строй-Ресурс</span><span><i style="background:#A88DEB"></i>ООО Энергоком</span></div>
+    </section>
+    <div class="toolbar"><h2>Дашборды проектов · 5</h2><input class="search" id="search" type="search" placeholder="Найти проект" aria-label="Найти проект"></div>
+    <section class="grid" id="projects">
+      <article class="project-card" data-name="ооо «диалог»">
+        <div class="card-top">
+          <div>
+            <div class="project-no">Проект 01</div>
+            <h2>ООО «Диалог»</h2>
+          </div>
+          <div class="progress-ring" style="--value:13" aria-label="Выполнено 13%">
+            <span>13%</span>
+          </div>
+        </div>
+        <div class="dates">
+          <span><small>Старт</small>04.08.2026</span>
+          <span class=""><small>Финиш, план</small>18.12.2026</span>
+        </div>
+        <div class="status-strip" aria-label="Статусы мероприятий">
+          <i class="done" style="width:12.8%"></i>
+          <i class="work" style="width:12.8%"></i>
+          <i class="plan" style="width:74.4%"></i>
+        </div>
+        <div class="counts">
+          <span><b class="green">5</b> выполнено</span>
+          <span><b class="amber">5</b> в работе</span>
+          <span><b>29</b> план</span>
+        </div>
+        <div class="card-bottom">
+          <span class="deadline ">114 дн. до планового финиша</span>
+          <a href="./dialog_dashboard_final.html" aria-label="Открыть дашборд ООО «Диалог»">Открыть дашборд <b>→</b></a>
+        </div>
+      </article>
+      <article class="project-card" data-name="нпф итс">
+        <div class="card-top">
+          <div>
+            <div class="project-no">Проект 02</div>
+            <h2>НПФ ИТС</h2>
+          </div>
+          <div class="progress-ring" style="--value:31" aria-label="Выполнено 31%">
+            <span>31%</span>
+          </div>
+        </div>
+        <div class="dates">
+          <span><small>Старт</small>13.07.2026</span>
+          <span class=""><small>Финиш, план</small>10.11.2026</span>
+        </div>
+        <div class="status-strip" aria-label="Статусы мероприятий">
+          <i class="done" style="width:30.8%"></i>
+          <i class="work" style="width:7.7%"></i>
+          <i class="plan" style="width:61.5%"></i>
+        </div>
+        <div class="counts">
+          <span><b class="green">12</b> выполнено</span>
+          <span><b class="amber">3</b> в работе</span>
+          <span><b>24</b> план</span>
+        </div>
+        <div class="card-bottom">
+          <span class="deadline ">76 дн. до планового финиша</span>
+          <a href="./Дашборды проектов/dashboard_its.html" aria-label="Открыть дашборд НПФ ИТС">Открыть дашборд <b>→</b></a>
+        </div>
+      </article>
+      <article class="project-card" data-name="ооо лазерные системы">
+        <div class="card-top">
+          <div>
+            <div class="project-no">Проект 03</div>
+            <h2>ООО Лазерные системы</h2>
+          </div>
+          <div class="progress-ring" style="--value:38" aria-label="Выполнено 38%">
+            <span>38%</span>
+          </div>
+        </div>
+        <div class="dates">
+          <span><small>Старт</small>25.05.2026</span>
+          <span class="warn"><small>Финиш, план</small>25.09.2026</span>
+        </div>
+        <div class="status-strip" aria-label="Статусы мероприятий">
+          <i class="done" style="width:38.5%"></i>
+          <i class="work" style="width:20.5%"></i>
+          <i class="plan" style="width:41%"></i>
+        </div>
+        <div class="counts">
+          <span><b class="green">15</b> выполнено</span>
+          <span><b class="amber">8</b> в работе</span>
+          <span><b>16</b> план</span>
+        </div>
+        <div class="card-bottom">
+          <span class="deadline warn">30 дн. до планового финиша</span>
+          <a href="./Дашборды проектов/dashboard_laser_systems.html" aria-label="Открыть дашборд ООО Лазерные системы">Открыть дашборд <b>→</b></a>
+        </div>
+      </article>
+      <article class="project-card" data-name="ооо строй-ресурс">
+        <div class="card-top">
+          <div>
+            <div class="project-no">Проект 04</div>
+            <h2>ООО Строй-Ресурс</h2>
+          </div>
+          <div class="progress-ring" style="--value:13" aria-label="Выполнено 13%">
+            <span>13%</span>
+          </div>
+        </div>
+        <div class="dates">
+          <span><small>Старт</small>28.07.2026</span>
+          <span class=""><small>Финиш, план</small>28.11.2026</span>
+        </div>
+        <div class="status-strip" aria-label="Статусы мероприятий">
+          <i class="done" style="width:12.8%"></i>
+          <i class="work" style="width:10.3%"></i>
+          <i class="plan" style="width:76.9%"></i>
+        </div>
+        <div class="counts">
+          <span><b class="green">5</b> выполнено</span>
+          <span><b class="amber">4</b> в работе</span>
+          <span><b>30</b> план</span>
+        </div>
+        <div class="card-bottom">
+          <span class="deadline ">94 дн. до планового финиша</span>
+          <a href="./Дашборды проектов/dashboard_stroy_resurs.html" aria-label="Открыть дашборд ООО Строй-Ресурс">Открыть дашборд <b>→</b></a>
+        </div>
+      </article>
+      <article class="project-card" data-name="ооо энергоком">
+        <div class="card-top">
+          <div>
+            <div class="project-no">Проект 05</div>
+            <h2>ООО Энергоком</h2>
+          </div>
+          <div class="progress-ring" style="--value:21" aria-label="Выполнено 21%">
+            <span>21%</span>
+          </div>
+        </div>
+        <div class="dates">
+          <span><small>Старт</small>04.08.2026</span>
+          <span class=""><small>Финиш, план</small>05.12.2026</span>
+        </div>
+        <div class="status-strip" aria-label="Статусы мероприятий">
+          <i class="done" style="width:20.5%"></i>
+          <i class="work" style="width:5.1%"></i>
+          <i class="plan" style="width:74.4%"></i>
+        </div>
+        <div class="counts">
+          <span><b class="green">8</b> выполнено</span>
+          <span><b class="amber">2</b> в работе</span>
+          <span><b>29</b> план</span>
+        </div>
+        <div class="card-bottom">
+          <span class="deadline ">101 дн. до планового финиша</span>
+          <a href="./Дашборды проектов/dashboard_energocom.html" aria-label="Открыть дашборд ООО Энергоком">Открыть дашборд <b>→</b></a>
+        </div>
+      </article>
+    </section>
+    <footer>Источники: отдельные локальные дашборды проектов; данные Notion — снимок на 25.08.2026. Всего мероприятий: 195. Сводка сформирована 26.08.2026.</footer>
+  </main>
+  <script>
+    const search = document.getElementById('search');
+    search.addEventListener('input', () => {
+      const q = search.value.trim().toLowerCase();
+      document.querySelectorAll('.project-card').forEach(card => card.classList.toggle('hidden', !card.dataset.name.includes(q)));
+    });
+  </script>
+</body>
+</html>
